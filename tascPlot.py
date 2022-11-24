@@ -86,7 +86,7 @@ if __name__ == "__main__":
     targetLon, targetLat = plotTASC(ax, lastTime, tascLoc)
     trailLats = []
     trailLons = []
-    cutOffTime = dt.utcnow() - timedelta(hours=60)
+    cutOffTime = dt.utcnow() - timedelta(minutes=15)
     for time, data in tascLoc.iloc[::-1].iterrows():
         if time > cutOffTime:
             if data["deltaLat"] == 0:

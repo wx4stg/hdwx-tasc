@@ -20,8 +20,6 @@ then
     fi
     cp ../HDWX_helpers.py ./
 fi
-echo $condaRootPath
-echo $condaEnvName
 if [ -f $condaRootPath/envs/$condaEnvName/bin/python3 ]
 then
     if [ -f aprs-lock.txt ]
