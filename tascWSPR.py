@@ -41,16 +41,11 @@ def fetchWSPR():
     deltaLons = []
     types = []
     for spot in spots:
-        thisDate = dt.fromtimestamp(int(spot["Date"]))
+        thisDate = pytz.timezone("US/Central").localize(dt.fromtimestamp(int(spot["Date"])), is_dst=None).astimezone(pytz.utc)
         thisLat, thisLon = mh.to_location(spot["Grid"])
         thisLatC, thisLonC = mh.to_location(spot["Grid"], center=True)
         thisLatDelta = 2*(thisLatC - thisLat)
         thisLonDelta = 2*(thisLonC - thisLon)
-        print("====")
-        print(f"{thisLat}, {thisLon}")
-        print(f"{thisLatC}, {thisLonC}")
-        print(f"{thisLat+thisLatDelta}, {thisLon+thisLonDelta}")
-        print("====")
         datetimes.append(thisDate)
         lats.append(thisLat)
         lons.append(thisLon)
@@ -73,8 +68,7 @@ if __name__ == "__main__":
         oldData = pd.read_csv(path.join(basePath, "tascLoc.csv"), index_col=0)
         oldData.index = pd.to_datetime(oldData.index)
         lastDt = oldData.index[-1]
-        print(lastDt)
-        if lastDt > dt.utcnow() - timedelta(hours=2):
+        if lastDt > dt.utcnow() - timedelta(minutes=45):
             updateWait = 150
-            print("Data is up to date")
+            print("Starting rapid update cycle")
     fetchWSPR()
