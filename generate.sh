@@ -47,7 +47,7 @@ then
             $condaRootPath/envs/$condaEnvName/bin/python3 tascWSPR.py &
             echo -n $! > wspr-lock.txt
         else
-            echo "Plotter locked"
+            echo "WSPR locked"
         fi
     else
             echo "Fetching WSPR data..."

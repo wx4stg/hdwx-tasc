@@ -41,7 +41,7 @@ def fetchWSPR():
     deltaLons = []
     types = []
     for spot in spots:
-        thisDate = pytz.timezone("US/Central").localize(dt.fromtimestamp(int(spot["Date"])), is_dst=None).astimezone(pytz.utc)
+        thisDate = pytz.timezone("US/Central").localize(dt.fromtimestamp(int(spot["Date"])), is_dst=None).astimezone(pytz.utc).replace(tzinfo=None)
         thisLat, thisLon = mh.to_location(spot["Grid"])
         thisLatC, thisLonC = mh.to_location(spot["Grid"], center=True)
         thisLatDelta = 2*(thisLatC - thisLat)
