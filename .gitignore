@@ -1,0 +1,9 @@
+__pycache__/
+wsprPasswd.txt
+tascLoc.csv
+*.grib2.gz
+*.grib2
+output/
+*-lock.txt
+HDWX_helpers.py
+
