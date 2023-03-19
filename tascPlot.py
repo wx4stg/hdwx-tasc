@@ -15,6 +15,7 @@ from cartopy import feature as cfeat
 from metpy import plots as mpplots
 import numpy as np
 import xarray as xr
+import pyart
 from datetime import datetime as dt, timedelta
 import requests
 
@@ -29,12 +30,8 @@ def addMRMSToFig(fig, ax, mrmsGribName, axExtent, time):
     radarDS = xr.open_dataset(datasetFilePath)
     radarDS = radarDS.sel(latitude=slice(axExtent[3], axExtent[2]), longitude=slice(axExtent[0]+360, axExtent[1]+360))
     radarData = np.ma.masked_array(radarDS.unknown.data, mask=np.where(radarDS.unknown.data > 10, 0, 1))
-    specR = plt.cm.Spectral_r(np.linspace(0, 1, 200))
-    pink = plt.cm.PiYG(np.linspace(0, 0.25, 40))
-    purple = plt.cm.PRGn_r(np.linspace(0.75, 1, 40))
-    cArr = np.vstack((specR, pink, purple))
-    cmap = pltcolors.LinearSegmentedColormap.from_list("cvd-reflectivity", cArr)
-    vmin=10
+    cmap = "pyart_ChaseSpectral"
+    vmin=-10
     vmax=80
     rdr = ax.pcolormesh(radarDS.longitude, radarDS.latitude, radarData, cmap=cmap, vmin=vmin, vmax=vmax, transform=ccrs.PlateCarree(), zorder=5, alpha=0.5)
     runPathExtension = path.join(time.strftime("%Y"), time.strftime("%m"), time.strftime("%d"), "0000")
