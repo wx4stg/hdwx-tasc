@@ -41,10 +41,11 @@ def addMRMSToFig(fig, ax, mrmsGribName, axExtent, time):
     Path(path.join(basePath, "output", "products", "tasc", "rala", runPathExtension)).mkdir(parents=True, exist_ok=True)
     if hasHelpers:
         HDWX_helpers.dressImage(fig, ax, "TASC Location + MRMS Reflectivity", time, notice="MRMS data provided by NOAA/NSSL. WSPR data courtesy of wsprnet.org", plotHandle=rdr, colorbarLabel="Reflectivity (dBZ)")
-    fig.savefig(path.join(basePath, "output", "products", "tasc", "rala", runPathExtension, time.strftime("%H%M.png")))
-    if hasHelpers:
+        HDWX_helpers.saveImage(fig, path.join(basePath, "output", "products", "tasc", "rala", runPathExtension, time.strftime("%H%M.png")))
         HDWX_helpers.writeJson(basePath, 191, time.replace(hour=0), time.strftime("%H%M.png"), time, ["0,0", "0,0"], 60)
-
+    else:
+        fig.savefig(path.join(basePath, "output", "products", "tasc", "rala", runPathExtension, time.strftime("%H%M.png")))
+    plt.close(fig)
 
 def plotTASC(ax, timeToPlot, data):
     infoToPlot = data.loc[timeToPlot]
@@ -105,12 +106,14 @@ if __name__ == "__main__":
     pathToSave = path.join(basePath, "output", "gisproducts", "tasc", lastTime.strftime("%Y"), lastTime.strftime("%m"), lastTime.strftime("%d"), lastTime.strftime("0000"), filenameToSave)
     extent = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
     Path(path.dirname(pathToSave)).mkdir(exist_ok=True, parents=True)
-    fig.savefig(pathToSave, transparent=True, bbox_inches=extent)
     point1 = ccrs.PlateCarree().transform_point(ax.get_extent()[0], ax.get_extent()[2], ccrs.epsg(3857))
     point2 = ccrs.PlateCarree().transform_point(ax.get_extent()[1], ax.get_extent()[3], ccrs.epsg(3857))
     gisInfo = [str(point1[1])+","+str(point1[0]), str(point2[1])+","+str(point2[0])]
     if hasHelpers:
+        HDWX_helpers.saveImage(fig, pathToSave, transparent=True, bbox_inches=extent)
         HDWX_helpers.writeJson(basePath, 190, lastTime.replace(hour=0), filenameToSave, lastTime, gisInfo, 60)
+    else:
+        fig.savefig(pathToSave, transparent=True, bbox_inches=extent)
 
     gribList = pd.read_html("https://mrms.ncep.noaa.gov/data/2D/ReflectivityAtLowestAltitude/")[0].dropna(how="any")
     gribList = gribList[~gribList.Name.str.contains("latest") == True].reset_index()
