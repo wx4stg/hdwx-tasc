@@ -25,7 +25,7 @@ if path.exists(path.join(basePath, "HDWX_helpers.py")):
     import HDWX_helpers
     hasHelpers = True
 
-def addMRMSToFig(fig, ax, mrmsGribName, axExtent, time):
+def addMRMSToFig(fig, ax, mrmsGribName, axExtent, time, targetLat, targetLon):
     datasetFilePath = path.join(basePath, "radarInput", mrmsGribName)
     radarDS = xr.open_dataset(datasetFilePath)
     radarDS = radarDS.sel(latitude=slice(axExtent[3], axExtent[2]), longitude=slice(axExtent[0]+360, axExtent[1]+360))
@@ -37,7 +37,7 @@ def addMRMSToFig(fig, ax, mrmsGribName, axExtent, time):
     runPathExtension = path.join(time.strftime("%Y"), time.strftime("%m"), time.strftime("%d"), "0000")
     Path(path.join(basePath, "output", "products", "tasc", "rala", runPathExtension)).mkdir(parents=True, exist_ok=True)
     if hasHelpers:
-        HDWX_helpers.dressImage(fig, ax, "TASC Location + MRMS Reflectivity", time, notice="MRMS data provided by NOAA/NSSL. WSPR data courtesy of wsprnet.org", plotHandle=rdr, colorbarLabel="Reflectivity (dBZ)")
+        HDWX_helpers.dressImage(fig, ax, f"TASC Location: {targetLat:.2f}, {targetLon:.2f} + MRMS Reflectivity", time, notice="MRMS data provided by NOAA/NSSL. WSPR data courtesy of wsprnet.org", plotHandle=rdr, colorbarLabel="Reflectivity (dBZ)")
         HDWX_helpers.saveImage(fig, path.join(basePath, "output", "products", "tasc", "rala", runPathExtension, time.strftime("%H%M.png")))
         HDWX_helpers.writeJson(basePath, 191, time.replace(hour=0), time.strftime("%H%M.png"), time, ["0,0", "0,0"], 60)
     else:
@@ -130,6 +130,6 @@ if __name__ == "__main__":
                 with open(output.replace(".gz", ""), "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
             remove(output)
-    addMRMSToFig(fig, ax, path.join(basePath, latestRadarGrib.replace(".gz", "")), [point1[0], point2[0], point1[1], point2[1]], lastTime)
+    addMRMSToFig(fig, ax, path.join(basePath, latestRadarGrib.replace(".gz", "")), [point1[0], point2[0], point1[1], point2[1]], lastTime, targetLat, targetLon)
     [remove(path.join(basePath, oldRadarFile)) for oldRadarFile in listdir(basePath) if oldRadarFile.endswith(".idx")]
     
