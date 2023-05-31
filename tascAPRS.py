@@ -17,7 +17,7 @@ def exitFunc():
     print("Wrote APRS data!")
     if path.exists(path.join(basePath, "aprs-lock.txt")):
         remove(path.join(basePath, "aprs-lock.txt"))
-    system("bash generate.sh &")
+    system("bash generate.sh --no-cleanup &")
 
 def callback(packet):
     if b"WX5AGS-9" in packet:

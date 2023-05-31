@@ -21,7 +21,7 @@ def exitFunc():
     sleep(updateWait)
     if path.exists("wspr-lock.txt"):
         remove("wspr-lock.txt")
-    system("bash generate.sh &")
+    system("bash generate.sh --no-cleanup &")
 
 
 def fetchWSPR():
