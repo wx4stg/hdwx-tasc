@@ -1,0 +1,16 @@
+[Unit]
+Description=hdwx-tasc_plot
+PartOf=hdwx.target
+
+[Service]
+ExecStart=$pathToPython tascPlot.py
+ExecStop=rsync -ulrH ./output/. $targetDir --exclude=productTypes/ --exclude="*.tmp"
+Restart=always
+RestartSec=30
+RuntimeMaxSec=600
+WorkingDirectory=$pathToClone/hdwx-tasc/
+User=$myUsername
+SyslogIdentifier=hdwx-tasc_plot
+
+[Install]
+WantedBy=hdwx.target

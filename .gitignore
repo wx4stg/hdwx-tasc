@@ -5,6 +5,5 @@ tascLoc.csv
 *.grib2
 *.idx
 output/
-*-lock.txt
 HDWX_helpers.py
 

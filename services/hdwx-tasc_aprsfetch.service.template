@@ -1,0 +1,14 @@
+[Unit]
+Description=hdwx-tasc_aprsfetch
+PartOf=hdwx.target
+
+[Service]
+ExecStart=$pathToPython tascAPRS.py
+Restart=always
+RuntimeMaxSec=1800
+WorkingDirectory=$pathToClone/hdwx-tasc/
+User=$myUsername
+SyslogIdentifier=hdwx-tasc_aprsfetch
+
+[Install]
+WantedBy=hdwx.target

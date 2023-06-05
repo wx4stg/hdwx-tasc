@@ -10,14 +10,7 @@ import atexit
 
 
 basePath = path.dirname(path.abspath(__file__))
-counter = 0
 
-@atexit.register
-def exitFunc():
-    print("Wrote APRS data!")
-    if path.exists(path.join(basePath, "aprs-lock.txt")):
-        remove(path.join(basePath, "aprs-lock.txt"))
-    system("bash generate.sh --no-cleanup &")
 
 def callback(packet):
     if b"WX5AGS-9" in packet:
@@ -34,11 +27,6 @@ def callback(packet):
             cutOffTime = dt.utcnow() - timedelta(days=1)
             newData = newData[newData.index > cutOffTime]
             newData.to_csv(path.join(basePath, "tascLoc.csv"))
-            exit()
-    else:
-        global counter
-        counter += 1
-        if counter >= 50000:
             exit()
             
 

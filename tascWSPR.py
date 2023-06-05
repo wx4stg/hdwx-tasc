@@ -19,9 +19,6 @@ updateWait = 1800
 def exitFunc():
     print(f"waiting {updateWait} seconds before exiting")
     sleep(updateWait)
-    if path.exists("wspr-lock.txt"):
-        remove("wspr-lock.txt")
-    system("bash generate.sh --no-cleanup &")
 
 
 def fetchWSPR():

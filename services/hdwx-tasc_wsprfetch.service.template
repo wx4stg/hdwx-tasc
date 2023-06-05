@@ -1,0 +1,14 @@
+[Unit]
+Description=hdwx-tasc_wsprfetch
+PartOf=hdwx.target
+
+[Service]
+ExecStart=$pathToPython tascWSPR.py
+Restart=always
+RuntimeMaxSec=600
+WorkingDirectory=$pathToClone/hdwx-tasc/
+User=$myUsername
+SyslogIdentifier=hdwx-tasc_wsprfetch
+
+[Install]
+WantedBy=hdwx.target
