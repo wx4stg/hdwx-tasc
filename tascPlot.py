@@ -18,6 +18,7 @@ import xarray as xr
 import pyart
 from datetime import datetime as dt, timedelta
 import requests
+import sys
 
 basePath = path.dirname(path.abspath(__file__))
 hasHelpers = False
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     tascLoc.index = pd.to_datetime(tascLoc.index)
     lastTime = tascLoc.index[-1]
     filenameToSave = lastTime.strftime("%H%M") + ".png"
-    if path.exists(path.join(basePath, "output", "gisproducts", "tasc", lastTime.strftime("%Y"), lastTime.strftime("%m"), lastTime.strftime("%d"), lastTime.strftime("0000"), filenameToSave)):
+    if path.exists(path.join(basePath, "output", "products", "tasc", "rala", lastTime.strftime("%Y"), lastTime.strftime("%m"), lastTime.strftime("%d"), "0000", filenameToSave)):
         exit()
     fig = plt.figure()
     ax = plt.axes(projection=ccrs.epsg(3857))
@@ -100,17 +101,18 @@ if __name__ == "__main__":
     ax.add_feature(mpplots.USCOUNTIES.with_scale("5m"), edgecolor="green", linewidth=0.25, zorder=2)
     px = 1/plt.rcParams["figure.dpi"]
     fig.set_size_inches(1920*px, 1080*px)
-    pathToSave = path.join(basePath, "output", "gisproducts", "tasc", lastTime.strftime("%Y"), lastTime.strftime("%m"), lastTime.strftime("%d"), lastTime.strftime("0000"), filenameToSave)
-    extent = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
-    Path(path.dirname(pathToSave)).mkdir(exist_ok=True, parents=True)
-    point1 = ccrs.PlateCarree().transform_point(ax.get_extent()[0], ax.get_extent()[2], ccrs.epsg(3857))
-    point2 = ccrs.PlateCarree().transform_point(ax.get_extent()[1], ax.get_extent()[3], ccrs.epsg(3857))
-    gisInfo = [str(point1[1])+","+str(point1[0]), str(point2[1])+","+str(point2[0])]
-    if hasHelpers:
-        HDWX_helpers.saveImage(fig, pathToSave, transparent=True, bbox_inches=extent)
-        HDWX_helpers.writeJson(basePath, 190, lastTime.replace(hour=0), filenameToSave, lastTime, gisInfo, 60)
-    else:
-        fig.savefig(pathToSave, transparent=True, bbox_inches=extent)
+    if "--no-gis" not in sys.argv:
+        pathToSave = path.join(basePath, "output", "gisproducts", "tasc", lastTime.strftime("%Y"), lastTime.strftime("%m"), lastTime.strftime("%d"), lastTime.strftime("0000"), filenameToSave)
+        extent = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
+        Path(path.dirname(pathToSave)).mkdir(exist_ok=True, parents=True)
+        point1 = ccrs.PlateCarree().transform_point(ax.get_extent()[0], ax.get_extent()[2], ccrs.epsg(3857))
+        point2 = ccrs.PlateCarree().transform_point(ax.get_extent()[1], ax.get_extent()[3], ccrs.epsg(3857))
+        gisInfo = [str(point1[1])+","+str(point1[0]), str(point2[1])+","+str(point2[0])]
+        if hasHelpers:
+            HDWX_helpers.saveImage(fig, pathToSave, transparent=True, bbox_inches=extent)
+            HDWX_helpers.writeJson(basePath, 190, lastTime.replace(hour=0), filenameToSave, lastTime, gisInfo, 60)
+        else:
+            fig.savefig(pathToSave, transparent=True, bbox_inches=extent)
 
     gribList = pd.read_html("https://mrms.ncep.noaa.gov/data/2D/ReflectivityAtLowestAltitude/")[0].dropna(how="any")
     gribList = gribList[~gribList.Name.str.contains("latest") == True].reset_index()

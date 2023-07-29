@@ -3,7 +3,7 @@ Description=hdwx-tasc_plot
 PartOf=hdwx.target
 
 [Service]
-ExecStart=$pathToPython tascPlot.py
+ExecStart=$pathToPython tascPlot.py $shouldGIS
 ExecStop=rsync -ulrH ./output/. $targetDir --exclude=productTypes/ --exclude="*.tmp"
 Restart=always
 RestartSec=30
